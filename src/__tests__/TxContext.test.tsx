@@ -16,13 +16,13 @@ describe('TxContext', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('loads transactions', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce(mockTransactions() as any)
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(mockTransactions() as any)
     render(<Wrapper><div /></Wrapper>)
     await waitFor(()=>{})
   })
 
   it('gets details and updates status', async () => {
-    vi.spyOn(global, 'fetch')
+    vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(mockDetails() as any)   // getById
       .mockResolvedValueOnce(mockUpdated() as any)   // updateStatus
       .mockResolvedValueOnce(mockTransactions() as any) // reload
@@ -31,7 +31,7 @@ describe('TxContext', () => {
   })
 
   it('adds transfer', async () => {
-    vi.spyOn(global, 'fetch')
+    vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(mockTransferOk() as any) // add
       .mockResolvedValueOnce(mockTransactions() as any) // reload
     render(<Wrapper><div /></Wrapper>)
