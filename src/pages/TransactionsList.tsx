@@ -1,81 +1,170 @@
-
-import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useTx, Tx } from '../state/TxContext'
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTx, Tx } from "../state/TxContext";
 import {
-  Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-  TableSortLabel, TextField, Stack, Card, CardContent, Typography, useMediaQuery
-} from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Stack,
+  Card,
+  CardContent,
+  Typography,
+  useMediaQuery,
+  Button,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 
-type SortKey = 'dateoftransfer' | 'receivername' | 'amount'
+type SortKey = "dateoftransfer" | "receivername" | "amount";
 
 export default function TransactionsList() {
-  const { list, reload } = useTx()
-  const nav = useNavigate()
-  const [term, setTerm] = useState('')
-  const [sortKey, setSortKey] = useState<SortKey>('dateoftransfer')
-  const [sortDir, setSortDir] = useState<'ASC' | 'DESC'>('DESC')
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const { list, reload } = useTx();
+  const nav = useNavigate();
+  const [term, setTerm] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("dateoftransfer");
+  const [sortDir, setSortDir] = useState<"ASC" | "DESC">("DESC");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    reload(sortKey, sortDir)
-  }, [sortKey, sortDir])
+    reload(sortKey, sortDir);
+  }, [sortKey, sortDir]);
 
   const filtered = useMemo(() => {
-    const t = term.trim().toLowerCase()
-    if (!t) return list
-    return list.filter(x =>
-      x.receivername.toLowerCase().includes(t) ||
-      String(x.amount).includes(t) ||
-      new Date(x.dateoftransfer).toLocaleDateString().toLowerCase().includes(t)
-    )
-  }, [list, term])
+    const t = term.trim().toLowerCase();
+    if (!t) return list;
+    return list.filter(
+      (x) =>
+        x.receivername.toLowerCase().includes(t) ||
+        String(x.amount).includes(t) ||
+        new Date(x.dateoftransfer)
+          .toLocaleDateString()
+          .toLowerCase()
+          .includes(t)
+    );
+  }, [list, term]);
 
-  const open = (t: Tx) => nav(`/dashboard/details/${t.id}`)
+  const open = (t: Tx) => nav(`/dashboard/details/${t.id}`);
 
-  const formatCurrency = (n: string) => Number(n).toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 })
+  const formatCurrency = (n: string) => {
+    const num = Number(n);
+    return `-$${num.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
+  const labelFor = (key: SortKey) =>
+    key === "dateoftransfer"
+      ? "DATE"
+      : key === "receivername"
+      ? "BENEFICIARY"
+      : "AMOUNT";
+
+  const onSortBtnClick = (key: SortKey) => {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "ASC" ? "DESC" : "ASC"));
+    } else {
+      setSortKey(key);
+      setSortDir("DESC");
+    }
+  };
+
+  const paymentTypeLabel = (id: number) => {
+    switch (id) {
+      case 1:
+        return "Card Payment";
+      case 2:
+        return "Online Transfer";
+      case 3:
+        return "General Transaction";
+      default:
+        return `Payment type #${id}`;
+    }
+  };
 
   return (
     <Box>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ xs: 'stretch', md: 'center' }} justifyContent="space-between" mb={2}>
-        <TextField placeholder="Search…" value={term} onChange={e=>setTerm(e.target.value)} sx={{ maxWidth: 360 }} fullWidth />
-        <Box>
-          <TextField
-            select
-            label="Sort by"
-            SelectProps={{ native: true }}
-            value={sortKey}
-            onChange={e=>setSortKey(e.target.value as SortKey)}
-            sx={{ mr: 1, minWidth: 160 }}
-          >
-            <option value="dateoftransfer">Date</option>
-            <option value="receivername">Beneficiary</option>
-            <option value="amount">Amount</option>
-          </TextField>
-          <TextField
-            select
-            label="Direction"
-            SelectProps={{ native: true }}
-            value={sortDir}
-            onChange={e=>setSortDir(e.target.value as 'ASC' | 'DESC')}
-            sx={{ minWidth: 140 }}
-          >
-            <option value="DESC">DESC</option>
-            <option value="ASC">ASC</option>
-          </TextField>
-        </Box>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        alignItems={{ xs: "stretch", md: "center" }}
+        justifyContent="space-between"
+        mb={2}
+      >
+        {/* Search */}
+        <TextField
+          placeholder="Search…"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          sx={{ maxWidth: 360 }}
+          fullWidth
+        />
+
+        {/* Sort By + Buttons */}
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          flexWrap="wrap"
+          useFlexGap
+        >
+          <Typography variant="body2" fontWeight={600}>
+            Sort By
+          </Typography>
+
+          {(["dateoftransfer", "receivername", "amount"] as SortKey[]).map(
+            (key) => {
+              const isActive = sortKey === key;
+              const EndIcon = isActive
+                ? sortDir === "ASC"
+                  ? ArrowUpward
+                  : ArrowDownward
+                : undefined;
+
+              return (
+                <Button
+                  key={key}
+                  variant={isActive ? "contained" : "outlined"}
+                  size="small"
+                  onClick={() => onSortBtnClick(key)}
+                  endIcon={EndIcon ? <EndIcon fontSize="small" /> : undefined}
+                  sx={{ fontWeight: 700 }}
+                >
+                  {labelFor(key)}
+                </Button>
+              );
+            }
+          )}
+        </Stack>
       </Stack>
 
       {isMobile ? (
         <Stack spacing={1.5}>
-          {filtered.map(t => (
-            <Card key={t.id} onClick={()=>open(t)} sx={{ cursor: 'pointer' }}>
+          {filtered.map((t) => (
+            <Card key={t.id} onClick={() => open(t)} sx={{ cursor: "pointer" }}>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={600}>{t.receivername}</Typography>
-                <Typography variant="body2" color="text.secondary">{new Date(t.dateoftransfer).toLocaleDateString()}</Typography>
-                <Typography variant="subtitle2" mt={0.5}>{formatCurrency(t.amount)}</Typography>
+                <Typography variant="subtitle1" fontWeight={600}>
+                  {t.receivername}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {new Date(t.dateoftransfer).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {paymentTypeLabel(t.paymenttypeid)}
+                </Typography>
+                <Typography variant="subtitle2" mt={0.5}>
+                  {formatCurrency(t.amount)}
+                </Typography>
               </CardContent>
             </Card>
           ))}
@@ -85,44 +174,46 @@ export default function TransactionsList() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sortDirection={sortKey==='dateoftransfer' ? (sortDir==='ASC'?'asc':'desc') : false}>
-                  <TableSortLabel
-                    active={sortKey==='dateoftransfer'}
-                    direction={sortDir==='ASC'?'asc':'desc'}
-                    onClick={()=>setSortKey('dateoftransfer')}
-                  >
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={700}>
                     Date
-                  </TableSortLabel>
+                  </Typography>
                 </TableCell>
-                <TableCell sortDirection={sortKey==='receivername' ? (sortDir==='ASC'?'asc':'desc') : false}>
-                  <TableSortLabel
-                    active={sortKey==='receivername'}
-                    direction={sortDir==='ASC'?'asc':'desc'}
-                    onClick={()=>setSortKey('receivername')}
-                  >
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={700}>
                     Beneficiary
-                  </TableSortLabel>
+                  </Typography>
                 </TableCell>
-                <TableCell align="right" sortDirection={sortKey==='amount' ? (sortDir==='ASC'?'asc':'desc') : false}>
-                  <TableSortLabel
-                    active={sortKey==='amount'}
-                    direction={sortDir==='ASC'?'asc':'desc'}
-                    onClick={()=>setSortKey('amount')}
-                  >
+                <TableCell align="right">
+                  <Typography variant="subtitle2" fontWeight={700}>
                     Amount
-                  </TableSortLabel>
+                  </Typography>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map(t => (
-                <TableRow hover key={t.id} onClick={()=>open(t)} sx={{ cursor: 'pointer' }}>
-                  <TableCell>{new Date(t.dateoftransfer).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</TableCell>
+              {filtered.map((t) => (
+                <TableRow
+                  hover
+                  key={t.id}
+                  onClick={() => open(t)}
+                  sx={{ cursor: "pointer" }}
+                >
+                  <TableCell>
+                    {new Date(t.dateoftransfer).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </TableCell>
                   <TableCell>
                     <Typography fontWeight={600}>{t.receivername}</Typography>
-                    <Typography variant="caption" color="text.secondary">Payment type #{t.paymenttypeid}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {paymentTypeLabel(t.paymenttypeid)}
+                    </Typography>
                   </TableCell>
-                  <TableCell align="right">{formatCurrency(t.amount)}</TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(t.amount)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -130,5 +221,5 @@ export default function TransactionsList() {
         </TableContainer>
       )}
     </Box>
-  )
+  );
 }
