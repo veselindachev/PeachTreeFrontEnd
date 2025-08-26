@@ -40,7 +40,6 @@ export default function TransactionsList() {
   return (
     <Box>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ xs: 'stretch', md: 'center' }} justifyContent="space-between" mb={2}>
-        <Typography variant="h6">Recent Transactions</Typography>
         <TextField placeholder="Search…" value={term} onChange={e=>setTerm(e.target.value)} sx={{ maxWidth: 360 }} fullWidth />
         <Box>
           <TextField

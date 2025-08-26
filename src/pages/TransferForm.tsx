@@ -31,9 +31,9 @@ export default function TransferForm() {
   return (
     <form onSubmit={submit}>
       <Stack spacing={2}>
-        <TextField label="Sender" placeholder="Your name" value={sender} onChange={e=>setSender(e.target.value)} />
-        <TextField label="Receiver" placeholder="Amazon Store" value={receiver} onChange={e=>setReceiver(e.target.value)} />
-        <TextField label="Amount" type="number" inputProps={{ step: '0.01' }} placeholder="0.00" value={amount} onChange={e=>setAmount(e.target.value)} />
+        <TextField label="FROM ACCOUNT" placeholder="Name" value={sender} onChange={e=>setSender(e.target.value)} />
+        <TextField label="TO ACCOUNT" placeholder="Name" value={receiver} onChange={e=>setReceiver(e.target.value)} />
+        <TextField label="AMOUNT" type="number" inputProps={{ step: '0.01' }} placeholder="0.00" value={amount} onChange={e=>setAmount(e.target.value)} />
         <Button type="submit" variant="contained" disabled={!sender || !receiver || !amount}>Submit</Button>
       </Stack>
     </form>
