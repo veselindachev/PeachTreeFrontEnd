@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import PlaceholderImg from "../assets/beneficiary-placeholder.svg";
 
 type SortKey = "dateoftransfer" | "receivername" | "amount";
 
@@ -32,6 +33,32 @@ export default function TransactionsList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Thumbnail that prefers tx.receiverimage, otherwise uses the asset SVG
+  const BeneficiaryThumb: React.FC<{ tx: Tx }> = ({ tx }) => {
+    const initial =
+      ((tx as any).receiverimage as string | null) || PlaceholderImg;
+    const [src, setSrc] = useState<string>(initial);
+    return (
+      <Box
+        component="img"
+        src={src}
+        alt={`${tx.receivername} logo`}
+        onError={() => setSrc(PlaceholderImg)}
+        sx={{
+          width: 40,
+          height: 40,
+          borderRadius: 1,
+          border: "1px solid",
+          borderColor: "divider",
+          objectFit: "cover",
+          flexShrink: 0,
+          bgcolor: "background.paper",
+        }}
+      />
+    );
+  };
+
+  // ----- sorting then filtering -----
   const sorted = useMemo(() => {
     const arr = [...list];
     arr.sort((a, b) => {
@@ -43,7 +70,9 @@ export default function TransactionsList() {
             new Date(b.dateoftransfer).getTime();
           break;
         case "receivername":
-          cmp = a.receivername.localeCompare(b.receivername);
+          cmp = a.receivername
+            .toLowerCase()
+            .localeCompare(b.receivername.toLowerCase());
           break;
         case "amount":
           cmp = Number(a.amount) - Number(b.amount);
@@ -168,21 +197,31 @@ export default function TransactionsList() {
           {filtered.map((t) => (
             <Card key={t.id} onClick={() => open(t)} sx={{ cursor: "pointer" }}>
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {t.receivername}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(t.dateoftransfer).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {paymentTypeLabel(t.paymenttypeid)}
-                </Typography>
-                <Typography variant="subtitle2" mt={0.5}>
-                  {formatCurrency(t.amount)}
-                </Typography>
+                <Stack direction="row" spacing={1.5} alignItems="center">
+                  <BeneficiaryThumb tx={t} />
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="subtitle1" fontWeight={600} noWrap>
+                      {t.receivername}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {new Date(t.dateoftransfer).toLocaleDateString(
+                        undefined,
+                        {
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {paymentTypeLabel(t.paymenttypeid)}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ ml: "auto" }}>
+                    <Typography variant="subtitle2">
+                      {formatCurrency(t.amount)}
+                    </Typography>
+                  </Box>
+                </Stack>
               </CardContent>
             </Card>
           ))}
@@ -224,10 +263,21 @@ export default function TransactionsList() {
                     })}
                   </TableCell>
                   <TableCell>
-                    <Typography fontWeight={600}>{t.receivername}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {paymentTypeLabel(t.paymenttypeid)}
-                    </Typography>
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                      <BeneficiaryThumb tx={t} />
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography fontWeight={600} noWrap>
+                          {t.receivername}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          noWrap
+                        >
+                          {paymentTypeLabel(t.paymenttypeid)}
+                        </Typography>
+                      </Box>
+                    </Stack>
                   </TableCell>
                   <TableCell align="right">
                     {formatCurrency(t.amount)}
