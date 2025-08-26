@@ -1,0 +1,51 @@
+
+*{box-sizing:border-box}
+html,body,#root{height:100%;margin:0}
+body{font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;background:#f5f7fb}
+.app-shell{min-height:100%;display:grid;grid-template-rows:64px 1fr}
+.app-toolbar{background:linear-gradient(90deg,#00796b,#26a69a);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px}
+.brand{font-size:20px;font-weight:600}
+.container{padding:16px}
+.grid{display:grid;grid-template-columns: 360px 1fr;gap:16px}
+.card{background:white;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);padding:16px}
+.side-title{font-weight:600;margin:0 0 8px}
+.header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap}
+.search{width:320px;max-width:100%}
+.transactions-table .row{display:grid;grid-template-columns:120px 1fr 120px;gap:8px;padding:12px 8px;border-bottom:1px solid #eee;cursor:pointer}
+.transactions-table .row:hover{background:#fafafa}
+.status-pill{padding:2px 8px;border-radius:12px;background:#e0e0e0;font-size:12px}
+.status-send{background:#e3f2fd}
+.status-received{background:#e8f5e9}
+.status-payed{background:#fff3e0}
+.detail-grid{display:grid;grid-template-columns:180px 1fr;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;margin-bottom:8px}
+.detail-grid div{padding:12px;border-bottom:1px solid #e0e0e0}
+.detail-grid div:nth-child(odd){background:#fafafa}
+.actions{margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.footer{padding:8px 16px;color:#666}
+input, select, button{font:inherit}
+input, select{padding:10px;border:1px solid #ddd;border-radius:8px;width:100%}
+button{border:0;background:#ff6f00;color:#fff;padding:12px 14px;border-radius:8px;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+a{color:#00695c;text-decoration:underline}
+
+/* --- Responsive tweaks --- */
+@media (max-width: 1024px){
+  .grid{grid-template-columns: 300px 1fr}
+}
+@media (max-width: 900px){
+  .grid{grid-template-columns: 1fr}
+  .card{padding:14px}
+  .app-toolbar{gap:8px}
+  .brand{font-size:18px}
+  .header-row{flex-direction:column; align-items:stretch}
+  .search{width:100%}
+  .transactions-table .row{display:flex;flex-direction:column;gap:4px}
+  .transactions-table .row > div:nth-child(1){order:2;font-size:12px;color:#666}
+  .transactions-table .row > div:nth-child(3){order:3;text-align:left}
+  .detail-grid{grid-template-columns:1fr}
+}
+@media (max-width: 480px){
+  .container{padding:12px}
+  .card{border-radius:10px}
+  button{width:100%}
+}
