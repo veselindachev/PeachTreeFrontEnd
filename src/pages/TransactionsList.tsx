@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTx, Tx } from "../state/TxContext";
 import {
@@ -24,7 +24,7 @@ import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 type SortKey = "dateoftransfer" | "receivername" | "amount";
 
 export default function TransactionsList() {
-  const { list, reload } = useTx();
+  const { list } = useTx();
   const nav = useNavigate();
   const [term, setTerm] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("dateoftransfer");
@@ -32,14 +32,32 @@ export default function TransactionsList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  useEffect(() => {
-    reload(sortKey, sortDir);
-  }, [sortKey, sortDir]);
+  const sorted = useMemo(() => {
+    const arr = [...list];
+    arr.sort((a, b) => {
+      let cmp = 0;
+      switch (sortKey) {
+        case "dateoftransfer":
+          cmp =
+            new Date(a.dateoftransfer).getTime() -
+            new Date(b.dateoftransfer).getTime();
+          break;
+        case "receivername":
+          cmp = a.receivername.localeCompare(b.receivername);
+          break;
+        case "amount":
+          cmp = Number(a.amount) - Number(b.amount);
+          break;
+      }
+      return sortDir === "ASC" ? cmp : -cmp;
+    });
+    return arr;
+  }, [list, sortKey, sortDir]);
 
   const filtered = useMemo(() => {
     const t = term.trim().toLowerCase();
-    if (!t) return list;
-    return list.filter(
+    if (!t) return sorted;
+    return sorted.filter(
       (x) =>
         x.receivername.toLowerCase().includes(t) ||
         String(x.amount).includes(t) ||
@@ -48,7 +66,7 @@ export default function TransactionsList() {
           .toLowerCase()
           .includes(t)
     );
-  }, [list, term]);
+  }, [sorted, term]);
 
   const open = (t: Tx) => nav(`/dashboard/details/${t.id}`);
 
