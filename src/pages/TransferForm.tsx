@@ -1,5 +1,8 @@
+
 import React, { useState } from 'react'
 import { useTx } from '../state/TxContext'
+import { TextField, Stack, Button } from '@mui/material'
+import toast from 'react-hot-toast'
 
 export default function TransferForm() {
   const { add } = useTx()
@@ -10,37 +13,29 @@ export default function TransferForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     const amt = Math.abs(parseFloat(amount || '0'))
-    await add({
-      sendername: sender || 'Unknown',
-      receivername: receiver || 'Unknown',
-      amount: amt,
-      paymenttypeid: 1,
-      stateid: 1, // 1 = send transaction
-    })
-    setSender('')
-    setReceiver('')
-    setAmount('')
-    alert('Transfer created!')
+    try {
+      await add({
+        sendername: sender || 'Unknown',
+        receivername: receiver || 'Unknown',
+        amount: amt,
+        paymenttypeid: 1, // fixed default
+        stateid: 1,
+      })
+      toast.success('Transfer created!')
+      // Keep values after submission (do not reset)
+    } catch {
+      toast.error('Failed to create transfer')
+    }
   }
 
   return (
     <form onSubmit={submit}>
-      <div>
-        <label>Sender</label>
-        <input placeholder="Your name" value={sender} onChange={e=>setSender(e.target.value)} />
-      </div>
-      <div style={{height:10}} />
-      <div>
-        <label>Receiver</label>
-        <input placeholder="Amazon Store" value={receiver} onChange={e=>setReceiver(e.target.value)} />
-      </div>
-      <div style={{height:10}} />
-      <div>
-        <label>Amount</label>
-        <input type="number" step="0.01" placeholder="0.00" value={amount} onChange={e=>setAmount(e.target.value)} />
-      </div>
-      <div style={{height:16}} />
-      <button disabled={!sender || !receiver || !amount}>Submit</button>
+      <Stack spacing={2}>
+        <TextField label="Sender" placeholder="Your name" value={sender} onChange={e=>setSender(e.target.value)} />
+        <TextField label="Receiver" placeholder="Amazon Store" value={receiver} onChange={e=>setReceiver(e.target.value)} />
+        <TextField label="Amount" type="number" inputProps={{ step: '0.01' }} placeholder="0.00" value={amount} onChange={e=>setAmount(e.target.value)} />
+        <Button type="submit" variant="contained" disabled={!sender || !receiver || !amount}>Submit</Button>
+      </Stack>
     </form>
   )
 }

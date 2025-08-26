@@ -11,6 +11,8 @@ import TransactionDetails from './pages/TransactionDetails'
 import { AuthProvider } from './state/AuthContext'
 import { TxProvider } from './state/TxContext'
 import ProtectedRoute from './routing/ProtectedRoute'
+import AppThemeProvider from './theme/ColorMode'
+import { Toaster } from 'react-hot-toast'
 
 const router = createBrowserRouter([
   { path: '/', element: <LoginPage /> },
@@ -31,10 +33,13 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <TxProvider>
-        <RouterProvider router={router} />
-      </TxProvider>
-    </AuthProvider>
+    <AppThemeProvider>
+      <AuthProvider>
+        <TxProvider>
+          <RouterProvider router={router} />
+          <Toaster position="top-right" />
+        </TxProvider>
+      </AuthProvider>
+    </AppThemeProvider>
   </React.StrictMode>
 )

@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AppShell from '../shell/AppShell'
 import { useAuth } from '../state/AuthContext'
+import { Box, Paper, TextField, Typography, Button, Stack } from '@mui/material'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -10,37 +10,29 @@ export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
     setLoading(true)
-    try {
-      const ok = await login(username, password)
-      if (ok) nav('/dashboard')
-      else setError('Invalid credentials')
-    } finally {
-      setLoading(false)
-    }
+    const ok = await login(username, password)
+    setLoading(false)
+    if (ok) nav('/dashboard')
   }
 
   return (
-    <AppShell>
-      <div style={{display:'flex', alignItems:'center', justifyContent:'center', minHeight:'70vh'}}>
-        <form onSubmit={submit} className="card" style={{width:380, maxWidth:'95%'}}>
-          <h2 className="side-title">Sign in</h2>
-          <label>Username</label>
-          <input value={username} onChange={e=>setUsername(e.target.value)} />
-          <div style={{height:10}} />
-          <label>Password</label>
-          <input type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-          <div style={{height:10}} />
-          {error && <div style={{color:'#b71c1c', fontSize:13}}>{error}</div>}
-          <div style={{height:16}} />
-          <button disabled={!username || !password || loading}>{loading ? 'Signing in...' : 'Login'}</button>
-        </form>
-      </div>
-    </AppShell>
+    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={2}>
+      <Paper sx={{ p: 3, width: 380, maxWidth: '95%' }} elevation={3}>
+        <Typography variant="h6" mb={2}>Sign in</Typography>
+        <Box component="form" onSubmit={submit}>
+          <Stack spacing={2}>
+            <TextField label="Username" value={username} onChange={e=>setUsername(e.target.value)} fullWidth />
+            <TextField type="password" label="Password" value={password} onChange={e=>setPassword(e.target.value)} fullWidth />
+            <Button type="submit" variant="contained" disabled={!username || !password || loading}>
+              {loading ? 'Signing in...' : 'Login'}
+            </Button>
+          </Stack>
+        </Box>
+      </Paper>
+    </Box>
   )
 }

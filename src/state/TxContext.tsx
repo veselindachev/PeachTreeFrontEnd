@@ -1,6 +1,8 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAuth } from './AuthContext'
 import { API_BASE } from '../config'
+import toast from 'react-hot-toast'
 
 export type Tx = {
   id: string
@@ -34,60 +36,80 @@ export function TxProvider({ children }: { children: React.ReactNode }) {
 
   const reload = async (orderBy: string = 'dateoftransfer', orderDirection: string = 'DESC') => {
     if (!token) return
-    const res = await fetch(`${API_BASE}/transactions?orderBy=${encodeURIComponent(orderBy)}&orderDirection=${encodeURIComponent(orderDirection)}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    const data = await res.json()
-    if (data?.ok && Array.isArray(data.transactions)) {
-      setList(data.transactions)
-    } else {
-      setList([])
+    try {
+      const res = await fetch(`${API_BASE}/transactions?orderBy=${encodeURIComponent(orderBy)}&orderDirection=${encodeURIComponent(orderDirection)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data?.ok && Array.isArray(data.transactions)) {
+        setList(data.transactions)
+      } else {
+        setList([])
+      }
+    } catch {
+      toast.error('Failed to load transactions')
     }
   }
 
   const getById = async (id: string) => {
     if (!token) return null
-    const res = await fetch(`${API_BASE}/details/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    const data = await res.json()
-    if (data?.ok && data.details) {
-      return { id, ...data.details }
+    try {
+      const res = await fetch(`${API_BASE}/details/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data?.ok && data.details) {
+        return { id, ...data.details }
+      }
+    } catch {
+      toast.error('Failed to load details')
     }
     return null
   }
 
   const updateStatus = async (id: string, stateid: number) => {
     if (!token) return
-    await fetch(`${API_BASE}/updatedetails/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ stateid })
-    })
-    // refresh list after update
-    await reload()
+    try {
+      const res = await fetch(`${API_BASE}/updatedetails/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ stateid })
+      })
+      const data = await res.json()
+      if (data?.ok) {
+        toast.success('Status updated')
+      } else {
+        toast.error('Failed to update status')
+      }
+      await reload()
+    } catch {
+      toast.error('Status update failed')
+    }
   }
 
   const add: CtxShape['add'] = async (payload) => {
     if (!token) return
-    const res = await fetch(`${API_BASE}/maketransfer`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    })
-    const data = await res.json()
-    if (data?.ok) {
-      // refresh list so the new transfer appears
-      await reload()
-    } else {
-      // optional: throw or log
-      console.warn('maketransfer failed', data)
+    try {
+      const res = await fetch(`${API_BASE}/maketransfer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+      const data = await res.json()
+      if (data?.ok) {
+        toast.success('Transfer successful')
+        await reload()
+      } else {
+        toast.error('Transfer failed')
+      }
+    } catch {
+      toast.error('Transfer request failed')
     }
   }
 
