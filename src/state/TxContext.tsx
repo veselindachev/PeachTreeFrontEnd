@@ -88,7 +88,7 @@ export function TxProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       await reload();
     } catch {
-      toast.error("Status update failed");
+      toast.error("State update failed");
     }
   };
 

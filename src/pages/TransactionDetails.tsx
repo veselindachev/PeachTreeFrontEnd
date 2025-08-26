@@ -37,9 +37,9 @@ export default function TransactionDetails() {
     setTx({ ...tx, stateid, state: stateLabel(stateid) });
     try {
       await updateStatus(id!, stateid);
-      toast.success("Status updated");
+      toast.success("State updated");
     } catch {
-      toast.error("Failed to update status");
+      toast.error("Failed to update state");
     }
   };
 
