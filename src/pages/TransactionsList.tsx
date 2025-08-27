@@ -33,7 +33,6 @@ export default function TransactionsList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Thumbnail that prefers tx.receiverimage, otherwise uses the asset SVG
   const BeneficiaryThumb: React.FC<{ tx: Tx }> = ({ tx }) => {
     const initial =
       ((tx as any).receiverimage as string | null) || PlaceholderImg;
@@ -58,7 +57,6 @@ export default function TransactionsList() {
     );
   };
 
-  // ----- sorting then filtering -----
   const sorted = useMemo(() => {
     const arr = [...list];
     arr.sort((a, b) => {
@@ -145,7 +143,6 @@ export default function TransactionsList() {
         justifyContent="space-between"
         mb={2}
       >
-        {/* Search */}
         <TextField
           placeholder="Search…"
           value={term}
@@ -154,7 +151,6 @@ export default function TransactionsList() {
           fullWidth
         />
 
-        {/* Sort By + Buttons */}
         <Stack
           direction="row"
           alignItems="center"

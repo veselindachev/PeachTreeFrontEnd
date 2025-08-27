@@ -33,7 +33,6 @@ export default function TransactionDetails() {
 
   const onChange = async (val: string) => {
     const stateid = Number(val);
-    // optimistic local update
     setTx({ ...tx, stateid, state: stateLabel(stateid) });
     try {
       await updateStatus(id!, stateid);
@@ -44,7 +43,7 @@ export default function TransactionDetails() {
   };
 
   const formatAmount = (n: string) => {
-    const num = Math.abs(Number(n)); // ensure we don't get double negatives if API already sends negative values
+    const num = Math.abs(Number(n));
     return `-$${num.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

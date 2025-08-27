@@ -17,7 +17,7 @@ export default function TransferForm() {
         sendername: sender || "Unknown",
         receivername: receiver || "Unknown",
         amount: amt,
-        paymenttypeid: 1, // fixed default
+        paymenttypeid: 1,
         stateid: 1,
       });
     } catch {

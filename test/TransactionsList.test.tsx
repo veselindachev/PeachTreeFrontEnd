@@ -23,7 +23,6 @@ describe("TransactionsList", () => {
       </MemoryRouter>
     );
 
-    // Scope queries to the table to avoid matching the "DATE" sort button
     const table = await screen.findByRole("table");
     const t = within(table);
 

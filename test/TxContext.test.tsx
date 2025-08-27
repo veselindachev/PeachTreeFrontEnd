@@ -11,7 +11,6 @@ import {
 } from "./mocks//handlers";
 
 function Wrapper({ children }: { children: React.ReactNode }) {
-  // Provide a token via localStorage
   React.useEffect(() => {
     localStorage.setItem("auth-token", "t");
     localStorage.setItem("auth-username", "u");
@@ -40,9 +39,9 @@ describe("TxContext", () => {
 
   it("gets details and updates status", async () => {
     vi.spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(mockDetails() as any) // getById
-      .mockResolvedValueOnce(mockUpdated() as any) // updateStatus
-      .mockResolvedValueOnce(mockTransactions() as any); // reload
+      .mockResolvedValueOnce(mockDetails() as any)
+      .mockResolvedValueOnce(mockUpdated() as any)
+      .mockResolvedValueOnce(mockTransactions() as any);
     render(
       <Wrapper>
         <div />
@@ -53,8 +52,8 @@ describe("TxContext", () => {
 
   it("adds transfer", async () => {
     vi.spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(mockTransferOk() as any) // add
-      .mockResolvedValueOnce(mockTransactions() as any); // reload
+      .mockResolvedValueOnce(mockTransferOk() as any)
+      .mockResolvedValueOnce(mockTransactions() as any);
     render(
       <Wrapper>
         <div />

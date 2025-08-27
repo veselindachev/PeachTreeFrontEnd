@@ -2,7 +2,6 @@
 *{box-sizing:border-box}
 html,body,#root{height:100%;margin:0}
 /* Minimal custom CSS; most styling handled by MUI */
-/* Keep a pointer cursor class for clickable cards on desktop, if needed */
 @media (hover:hover) and (pointer:fine){
   .clickable{ cursor: pointer; }
 }
