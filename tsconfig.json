@@ -18,5 +18,5 @@
   },
   "include": [
     "src"
-  ]
+, "test/AuthContext.test.tsx", "test/LoginPage.test.tsx", "test/ProtectedRoute.test.tsx", "test/TransactionsList.test.tsx", "test/TransferForm.test.tsx", "test/TxContext.test.tsx"  ]
 }

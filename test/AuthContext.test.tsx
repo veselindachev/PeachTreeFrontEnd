@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import { AuthProvider, useAuth } from "../state/AuthContext";
-import { mockLoginSuccess, mockLoginFailure } from "../__mocks__/handlers";
+import { AuthProvider, useAuth } from "../src/state/AuthContext";
+import { mockLoginSuccess, mockLoginFailure } from "./mocks/handlers";
 
 function Consumer() {
   const { login, isLoggedIn } = useAuth();

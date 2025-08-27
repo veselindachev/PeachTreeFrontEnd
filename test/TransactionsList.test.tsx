@@ -2,10 +2,10 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import TransactionsList from "../pages/TransactionsList";
-import { TxProvider } from "../state/TxContext";
-import { AuthProvider } from "../state/AuthContext";
-import { mockTransactions } from "../__mocks__/handlers";
+import TransactionsList from "../src/pages/TransactionsList";
+import { TxProvider } from "../src/state/TxContext";
+import { AuthProvider } from "../src/state/AuthContext";
+import { mockTransactions } from "./mocks//handlers";
 
 describe("TransactionsList", () => {
   afterEach(() => vi.restoreAllMocks());

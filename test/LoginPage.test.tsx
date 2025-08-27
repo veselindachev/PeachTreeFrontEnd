@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import { AuthProvider } from "../state/AuthContext";
+import LoginPage from "../src/pages/LoginPage";
+import { AuthProvider } from "../src/state/AuthContext";
 
 describe("LoginPage", () => {
   it("renders fields", () => {

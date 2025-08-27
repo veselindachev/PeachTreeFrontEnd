@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import TransferForm from "../pages/TransferForm";
-import { TxProvider } from "../state/TxContext";
-import { AuthProvider } from "../state/AuthContext";
+import TransferForm from "../src/pages/TransferForm";
+import { TxProvider } from "../src/state/TxContext";
+import { AuthProvider } from "../src/state/AuthContext";
 
 describe("TransferForm", () => {
   it("renders inputs", () => {
